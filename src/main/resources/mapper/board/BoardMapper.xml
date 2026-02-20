@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vuebackend.mapper.BoardMapper">
+
+    <!-- 단건 조회 -->
+    <select id="selectBoard" resultType="Board">
+        SELECT id, userId, title, body, created_at
+        FROM board
+        WHERE id = #{id}
+    </select>
+
+    <!-- 다건 조회 (LIKE 검색) -->
+    <select id="selectList" resultType="Board">
+        SELECT id, userId, title, body, created_at
+        FROM board
+        <where>
+            <if test="userId != null and userId != ''">
+                AND userId LIKE CONCAT('%', #{userId}, '%')
+            </if>
+            <if test="title != null and title != ''">
+                AND title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="body != null and body != ''">
+                AND body LIKE CONCAT('%', #{body}, '%')
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <!-- 등록 -->
+    <insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board (userId, title, body, created_at)
+        VALUES (#{userId}, #{title}, #{body}, NOW())
+    </insert>
+
+    <!-- 수정 -->
+    <update id="updateBoard" parameterType="Board">
+        UPDATE board
+        SET userId = #{userId},
+            title = #{title},
+            body = #{body}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 삭제 -->
+    <delete id="deleteBoard">
+        DELETE FROM board
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
