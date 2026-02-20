@@ -36,9 +36,17 @@
     <!-- 수정 -->
     <update id="updateBoard" parameterType="Board">
         UPDATE board
-        SET userId = #{userId},
-            title = #{title},
-            body = #{body}
+        <set>
+            <if test="userId != null">
+                userId = #{userId},
+            </if>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="body != null">
+                body = #{body},
+            </if>
+        </set>
         WHERE id = #{id}
     </update>
 
