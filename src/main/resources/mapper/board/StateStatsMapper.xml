@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vuebackend.mapper.StateStatsMapper">
+    <select id="selectStats" resultType="map">
+                    SELECT
+                    API_CALL_CD,
+                    ACCS_URL_PATH,
+
+                    /* ======================
+                    1️⃣ 해외 출발지
+                    ====================== */
+                    CASE API_CALL_CD
+                        WHEN '002' THEN -74.0060      -- 뉴욕
+                        WHEN '003' THEN 121.4737      -- 상해
+                        WHEN '999' THEN 151.2093      -- 호주 (시드니)
+                        ELSE 0
+                    END
+                    +
+                    ((CRC32(ACCS_URL_PATH) % 200) / 5000) AS srcX,
+
+                    CASE API_CALL_CD
+                        WHEN '002' THEN 40.7128
+                        WHEN '003' THEN 31.2304
+                        WHEN '999' THEN -33.8688      -- 호주 (시드니)
+                        ELSE 0
+                    END
+                    +
+                    ((CRC32(CONCAT(ACCS_URL_PATH,'Y')) % 200) / 5000) AS srcY,
+
+                    /* ======================
+                    2️⃣ 한국 전역 랜덤 도착지
+                    ====================== */
+
+                    -- 경도 126 ~ 129.5
+                    126 + ((CRC32(ACCS_URL_PATH) % 3500) / 1000) AS destX,
+
+                    -- 위도 34 ~ 38.5
+                    34 + ((CRC32(CONCAT(ACCS_URL_PATH,'K')) % 4500) / 1000) AS destY,
+
+                    HTTP_STACD_VAL,
+                    COUNT(*) AS callCnt,
+                    ROUND(
+                        AVG(TIMESTAMPDIFF(MICROSECOND, STRT_DTM, END_DTM)) / 1000000,
+                        2
+                    ) AS avgDurationSec
+
+                FROM OW.TB_IF_SVR_WRK_L
+                GROUP BY API_CALL_CD, ACCS_URL_PATH, HTTP_STACD_VAL
+    </select>
+</mapper>

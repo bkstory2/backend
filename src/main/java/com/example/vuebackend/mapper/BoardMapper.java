@@ -12,8 +12,9 @@ public interface BoardMapper {
     // 단건 조회
     Board selectBoard(@Param("id") Long id);
 
-    // 다건 조회 (LIKE 검색)
-    List<Board> selectList(@Param("userId") String userId,
+    // 다건 조회 (board_id, LIKE 검색)
+    List<Board> selectList(@Param("board_id") String board_id,
+            @Param("userId") String userId,
             @Param("title") String title,
             @Param("body") String body);
 
@@ -25,4 +26,7 @@ public interface BoardMapper {
 
     // 삭제
     int deleteBoard(@Param("id") Long id);
+
+    // 파일명 NULL로 업데이트
+    int updateFileNmToNull(@Param("id") Long id);
 }

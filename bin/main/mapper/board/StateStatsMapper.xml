@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.vuebackend.mapper.StateStatsMapper">
+    <select id="selectStats" resultType="map">
+        SELECT
+            API_CALL_CD,
+            ACCS_URL_PATH,
+            HTTP_STACD_VAL,
+            COUNT(*) AS callCnt,
+            ROUND(AVG(TIMESTAMPDIFF(MICROSECOND, STRT_DTM, END_DTM)) / 1000000, 2) AS avgDurationSec
+        FROM tb_if_svr_wrk_l
+        GROUP BY API_CALL_CD, ACCS_URL_PATH, HTTP_STACD_VAL
+    </select>
+</mapper>

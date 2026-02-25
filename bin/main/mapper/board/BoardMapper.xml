@@ -4,27 +4,27 @@
 
     <!-- 단건 조회 -->
     <select id="selectBoard" resultType="Board">
-        SELECT board_id AS boardId, id, user_id AS userId, title, body, file_nm AS fileNm, created_at AS createdAt, updated_at AS updatedAt
-        FROM BOARD
+        SELECT board_id as boardId, id, user_id as userId, title, body, file_nm as fileNm, created_at as createdAt, updated_at as updatedAt
+        FROM board
         WHERE id = #{id}
     </select>
 
     <!-- 다건 조회 (board_id, LIKE 검색) -->
     <select id="selectList" resultType="Board">
-        SELECT board_id AS boardId, id, user_id AS userId, title, body, file_nm AS fileNm, created_at AS createdAt, updated_at AS updatedAt
-        FROM BOARD
+        SELECT board_id as boardId, id, user_id as userId, title, body, file_nm as fileNm, created_at as createdAt, updated_at as updatedAt
+        FROM board
         <where>
             <if test="board_id != null and board_id != ''">
                 AND board_id = #{board_id}
             </if>
             <if test="userId != null and userId != ''">
-                AND user_id LIKE '%' || #{userId} || '%'
+                AND user_id LIKE CONCAT('%', #{userId}, '%')
             </if>
             <if test="title != null and title != ''">
-                AND title LIKE '%' || #{title} || '%'
+                AND title LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="body != null and body != ''">
-                AND body LIKE '%' || #{body} || '%'
+                AND body LIKE CONCAT('%', #{body}, '%')
             </if>
         </where>
         ORDER BY id DESC
@@ -32,13 +32,13 @@
 
     <!-- 등록 -->
     <insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO BOARD (board_id, user_id, title, body, file_nm, created_at)
+        INSERT INTO board (board_id, user_id, title, body, file_nm, created_at)
         VALUES (#{boardId}, #{userId}, #{title}, #{body}, #{fileNm}, NOW())
     </insert>
 
     <!-- 수정 -->
     <update id="updateBoard" parameterType="Board">
-        UPDATE BOARD
+        UPDATE board
         <set>
             <if test="boardId != null">
                 board_id = #{boardId},
@@ -55,20 +55,20 @@
             <if test="fileNm != null">
                 file_nm = #{fileNm},
             </if>
-            updated_at = NOW() ,
+            updated_at = NOW(),
         </set>
         WHERE id = #{id}
     </update>
 
     <!-- 삭제 -->
     <delete id="deleteBoard">
-        DELETE FROM BOARD
+        DELETE FROM board
         WHERE id = #{id}
     </delete>
 
     <!-- 파일명 NULL로 업데이트 -->
     <update id="updateFileNmToNull">
-        UPDATE BOARD
+        UPDATE board
         SET file_nm = NULL, updated_at = NOW()
         WHERE id = #{id}
     </update>

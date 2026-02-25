@@ -1,20 +1,13 @@
 server:
-  port: 9000
+  port: 8080
 
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: 1234
-  devtools:
-    restart:
-      enabled: true
-    livereload:
-      enabled: true
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://10.210.1.135:13066/OW
+    username: USR_TST
+    password: Owtest1#2!
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
-  type-aliases-package: com.example.vuebackend.model
-  configuration:
-    map-underscore-to-camel-case: true
+  type-aliases-package: com.example
