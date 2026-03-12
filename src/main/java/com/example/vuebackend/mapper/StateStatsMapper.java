@@ -7,4 +7,6 @@ import java.util.List;
 @Mapper
 public interface StateStatsMapper {
     List<StateStatsDto> selectStats();
+
+    List<StateStatsDto> selectStatsData();
 }

@@ -18,4 +18,9 @@ public class StateStatsController {
     public List<StateStatsDto> getStats() {
         return stateStatsService.getStats();
     }
+
+    @GetMapping("/data")
+    public List<StateStatsDto> getData() {
+        return stateStatsService.getData();
+    }
 }

@@ -1,0 +1,178 @@
+
+
+backend 
+
+tb_if_svr_wrk_l
+
+-- test.tb_if_svr_wrk_l definition
+
+CREATE TABLE `tb_if_svr_wrk_l` (
+  `IF_SVR_WRK_LOG_NO` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '인터페이스서버작업로그번호',
+  `API_CALL_CD` varchar(3) NOT NULL COMMENT 'API호출코드',
+  `STRT_DTM` datetime(6) NOT NULL COMMENT '시작일시',
+  `END_DTM` datetime(6) NOT NULL COMMENT '종료일시',
+  `CLNT_IP_ADDR` varchar(15) NOT NULL COMMENT '클라이언트IP주소',
+  `ACCS_URL_PATH` varchar(500) NOT NULL COMMENT '접근URL경로',
+  `ACCS_PARAM_CN` varchar(1000) DEFAULT NULL COMMENT '접근파라미터내용',
+  `RPL_MSG_CN` varchar(500) DEFAULT NULL COMMENT '응답메시지내용',
+  `HTTP_STACD_VAL` varchar(3) NOT NULL COMMENT 'HTTP상태코드값',
+  `PROC_PRGM_ID` varchar(50) NOT NULL COMMENT '처리프로그램ID',
+  `RGST_PROCR_ID` varchar(50) NOT NULL COMMENT '등록처리자ID',
+  `RGST_PROC_DTM` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT '등록처리일시',
+  `UPDT_PROCR_ID` varchar(50) DEFAULT NULL COMMENT '수정처리자ID',
+  `UPDT_PROC_DTM` datetime(6) DEFAULT NULL COMMENT '수정처리일시',
+  PRIMARY KEY (`IF_SVR_WRK_LOG_NO`)
+) ENGINE=InnoDB AUTO_INCREMENT=537987 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+
+의  통계화면을  만들거야..
+
+데이터 샘플 tb_if_svr_wrk_l_202602201756.csv
+
+통계용 쿼리
+
+
+API_CALL_CD 지점별 , ACCS_URL_PATH  api경로별 , HTTP_STACD_VAL 결과상태 의  
+
+호출 수 , 응답시간 을 시각화 하는거야 ..
+  
+      select
+          API_CALL_CD,  ACCS_URL_PATH , HTTP_STACD_VAL
+          , COUNT(*) AS callCnt                                                          -- 총API호출수
+          , ROUND(AVG(TIMESTAMPDIFF(MICROSECOND, STRT_DTM, END_DTM)) / 1000000, 2) AS avgDurationSec -- 평균 응답시간
+         
+        FROM TB_IF_SVR_WRK_L  
+     group by API_CALL_CD  ,  ACCS_URL_PATH , HTTP_STACD_VAL
+     
+
+  CALL_CD 는 3개 인데,  3개 점에서 ,  API  서버에 호출 하는 ACCS_URL_PATH 의  개수 와  시간을  시각적으로 표현해죠 , 
+  개수 많은건 굴게 하고, 응답 시간 이 빠른건 빠르게, 느린건 느리게 움직이게 해죠
+
+  특히   HTTP_STACD_VAL 200인건 정상  파란색,  나머지는 에러 니깐 , 빨간색 계열로 표현 해죠..
+
+
+이건 퀴리 결과 샘플입니다.
+
+002	/itf/dailyBatch/pkBalance	200	105	0.20
+002	/itf/db/sapOrgList	200	35	0.00
+002	/itf/sap/contract/Progress	200	150	0.92
+002	/itf/sap/installment	200	2	3.50
+002	/itf/sap/order-progress	200	203	2.67
+002	/itf/sap/OrderCheck	200	8	0.00
+002	/itf/sap/orderCommitLimit	200	4	7.25
+002	/itf/sap/orderPackageInfo	200	11	0.00
+002	/itf/sap/product-limit	200	7	0.86
+002	/itf/sap/productCheckLimit	200	3	1.33
+002	/itf/sap/real-time-orderList	200	2	14.00
+002	/itf/sap/return-orderList	200	3	4.67
+002	/itf/sap/shipping-status	200	3	73.67
+003	/itf-lgs/sap/logistics/lot-master	200	32	6.53
+003	/itf/sap/logistics/bundle-barcode	200	1	6.00
+003	/itf/sap/logistics/export-invoice	200	1	2.00
+003	/itf/sap/logistics/goods-receipt	200	1	42.00
+003	/itf/sap/logistics/location	200	596	0.36
+003	/itf/sap/logistics/lot-master	200	1	1.00
+003	/itf/sap/logistics/material-unit-price	200	2	1208.00
+003	/itf/sap/logistics/plant	200	2	0.50
+003	/itf/sap/logistics/previous-period	200	1	5.00
+003	/itf/sap/logistics/purchase-order	200	1	1.00
+003	/itf/sap/logistics/storageLoc	200	16	0.50
+999	/g-itf/g-sap/business/billing-list	200	2	0.50
+999	/g-itf/g-sap/business/billing-list	400	1	0.00
+999	/g-itf/g-sap/common/barcode	200	106	0.05
+999	/g-itf/g-sap/common/barcode	400	4	0.25
+999	/g-itf/g-sap/common/bp-info	200	76	0.01
+999	/g-itf/g-sap/common/bp-info	400	3	0.00
+999	/g-itf/g-sap/common/city-code	200	2	0.00
+999	/g-itf/g-sap/common/city-code	400	1	0.00
+999	/g-itf/g-sap/common/credit-detail	400	3	0.00
+999	/g-itf/g-sap/common/cust-class-mapping	200	96	0.05
+999	/g-itf/g-sap/common/cust-class-mapping	400	8	0.25
+999	/g-itf/g-sap/common/material-info	200	60	0.13
+999	/g-itf/g-sap/common/material-info	400	1	0.00
+999	/g-itf/g-sap/common/material-search-help	200	70	0.04
+999	/g-itf/g-sap/common/material-search-help	400	2	0.00
+999	/g-itf/g-sap/common/order-base-info	200	239	0.11
+999	/g-itf/g-sap/common/order-base-info	400	85	0.14
+999	/g-itf/g-sap/common/order-material	200	19	0.11
+999	/g-itf/g-sap/common/order-material	400	1	1.00
+999	/g-itf/g-sap/common/order-status	200	5	0.40
+999	/g-itf/g-sap/common/order-status	400	1	0.00
+999	/g-itf/g-sap/common/order/shipment	200	2	0.00
+999	/g-itf/g-sap/common/order/shipment	400	1	0.00
+999	/g-itf/g-sap/common/pkg-mat-grp	200	3	0.00
+999	/g-itf/g-sap/common/pkg-mat-grp	400	1	0.00
+999	/g-itf/g-sap/common/promotion-discount	200	2	0.50
+999	/g-itf/g-sap/common/promotion-discount	400	1	0.00
+999	/g-itf/g-sap/common/promotion-list	200	6	0.17
+999	/g-itf/g-sap/common/promotion-list	400	1	0.00
+999	/g-itf/g-sap/common/sales-inventory	200	2	0.00
+999	/g-itf/g-sap/common/sales-inventory	400	1	1.00
+999	/g-itf/g-sap/common/sales-org-hier	200	23	0.09
+999	/g-itf/g-sap/common/sales-org-hier	400	2	0.00
+999	/g-itf/g-sap/common/sales-prices	400	12	0.17
+999	/g-itf/g-sap/common/sawon	200	4	0.00
+999	/g-itf/g-sap/common/sawon	400	1	0.00
+999	/g-itf/g-sap/fi/payment	400	3	0.33
+999	/g-itf/g-sap/fi/payment/collection-closing-entry	400	3	0.00
+999	/g-itf/g-sap/fi/payment/collection-contracts	400	3	0.00
+999	/g-itf/g-sap/fi/payment/creditCardReceive	200	2	0.00
+999	/g-itf/g-sap/fi/payment/creditCardReceive	400	1	1.00
+999	/g-itf/g-sap/fi/payment/package-connection	400	3	1.00
+999	/g-itf/g-sap/mall/emg-delivery/voucher	200	2	0.00
+999	/g-itf/g-sap/mall/emg-delivery/voucher	400	1	1.00
+999	/g-itf/g-sap/mall/emg-delivery/voucher/cancle	200	2	0.00
+999	/g-itf/g-sap/mall/emg-delivery/voucher/cancle	400	1	1.00
+999	/g-itf/g-sap/mall/material	200	2	0.50
+999	/g-itf/g-sap/mall/material	400	1	1.00
+999	/g-itf/g-sap/mall/order-info	200	2	0.50
+999	/g-itf/g-sap/mall/order-info	400	1	0.00
+999	/g-itf/g-sap/mall/stock-available	200	2	0.00
+999	/g-itf/g-sap/mall/stock-available	400	1	0.00
+999	/g-itf/g-sap/mall/udi-info	200	2	0.00
+999	/g-itf/g-sap/mall/udi-info	400	1	1.00
+999	/g-itf/g-sap/pkg/baseInfo	200	108	84.48
+999	/g-itf/g-sap/pkg/baseInfo	400	13	24.85
+999	/g-itf/g-sap/pkg/contract/base	200	11	0.91
+999	/g-itf/g-sap/pkg/contract/base	400	4	0.25
+999	/g-itf/g-sap/pkg/contract/detail	200	69	0.20
+999	/g-itf/g-sap/pkg/contract/detail	400	3	0.33
+999	/g-itf/g-sap/pkg/contract/original	200	8	0.00
+999	/g-itf/g-sap/pkg/contract/original	400	1	1.00
+999	/g-itf/g-sap/pkg/credit-limit	200	2	0.00
+999	/g-itf/g-sap/pkg/detail	200	10	0.20
+999	/g-itf/g-sap/pkg/detail	400	1	0.00
+999	/g-itf/g-sap/standard/company-code	200	2	0.00
+999	/g-itf/g-sap/standard/company-code	400	1	0.00
+999	/g-itf/g-sap/standard/division	200	2	0.00
+999	/g-itf/g-sap/standard/division	400	1	0.00
+999	/g-itf/g-sap/standard/external-material-groups	200	2	0.00
+999	/g-itf/g-sap/standard/external-material-groups	400	1	0.00
+999	/g-itf/g-sap/standard/language	200	2	0.00
+999	/g-itf/g-sap/standard/language	400	1	0.00
+999	/g-itf/g-sap/standard/material-group	200	2	0.00
+999	/g-itf/g-sap/standard/material-group	400	1	1.00
+999	/g-itf/g-sap/standard/material-type	200	2	0.00
+999	/g-itf/g-sap/standard/material-type	400	1	1.00
+999	/g-itf/g-sap/standard/sales-channel	200	2	0.00
+999	/g-itf/g-sap/standard/sales-channel	400	1	0.00
+999	/g-itf/g-sap/standard/sales-org	200	2	0.00
+999	/g-itf/g-sap/standard/sales-org	400	1	0.00
+999	/itf/db/cimsCstInfo	200	6	0.17
+999	/itf/db/cimsCstInfoList	200	3	0.33
+999	/itf/db/emp-customers	200	274	0.06
+999	/itf/db/itemPkgBalance	200	498	0.48
+999	/itf/db/sapOrgList	200	2	0.00
+999	/itf/sap/contract/package	200	1951	0.50
+999	/itf/sap/mall-order/cancel-package-order	200	1	0.00
+999	/itf/sap/mall-order/dds-package-order	200	3	1.67
+999	/itf/sap/mall-order/packageOrder	200	13	0.08
+999	/itf/sap/mall/material-info	200	6	38.00
+999	/itf/sap/mall/stock-available	200	1	5.00
+999	/itf/sap/order-progress/ProductItemPrice	200	515	0.45
+-------------------------------------------------------------------------
+
+frontend dashboard.vue 에  
+
+  https://echarts.apache.org/examples/en/editor.html?c=lines3d-flights-gl&gl=1   형태로  최대한 액션이 살아있는 대시보드를 만들고 싶어..
+

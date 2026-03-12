@@ -14,4 +14,8 @@ public class StateStatsService {
     public List<StateStatsDto> getStats() {
         return stateStatsMapper.selectStats();
     }
+
+    public List<StateStatsDto> getData() {
+        return stateStatsMapper.selectStatsData();
+    }
 }

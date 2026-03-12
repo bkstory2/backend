@@ -47,4 +47,28 @@
                 FROM OW.TB_IF_SVR_WRK_L
                 GROUP BY API_CALL_CD, ACCS_URL_PATH, HTTP_STACD_VAL
     </select>
+
+    <!-- 신규 쿼리: flights.json 구조에 맞게 데이터 반환 -->
+    <select id="selectStatsData" resultType="map">
+        SELECT
+            API_CALL_CD AS airport_code,
+            ACCS_URL_PATH AS route_path,
+            HTTP_STACD_VAL AS status,
+            COUNT(*) AS callCnt,
+            ROUND(AVG(TIMESTAMPDIFF(MICROSECOND, STRT_DTM, END_DTM)) / 1000000, 2) AS avgDurationSec,
+            CASE API_CALL_CD
+                WHEN '002' THEN -74.0060
+                WHEN '003' THEN 121.4737
+                WHEN '999' THEN 151.2093
+                ELSE 0
+            END AS longitude,
+            CASE API_CALL_CD
+                WHEN '002' THEN 40.7128
+                WHEN '003' THEN 31.2304
+                WHEN '999' THEN -33.8688
+                ELSE 0
+            END AS latitude
+        FROM OW.TB_IF_SVR_WRK_L
+        GROUP BY API_CALL_CD, ACCS_URL_PATH, HTTP_STACD_VAL
+    </select>
 </mapper>
